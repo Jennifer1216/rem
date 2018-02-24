@@ -1,1 +1,207 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content="Jennifer">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>手机相册</title>
+    <script type="text/javascript">
+        document.getElementsByTagName("html")[0].style.fontSize = document.documentElement.clientWidth/3 + "px";
+    </script>
+    <style type="text/css">
+        *{margin:0;padding:0;font-family: Microsoft YaHei,serif;}
+	    li{list-style: none;}
+        a {
+            text-decoration: none;
+        }
+        article {
+            width: 100%;
+            height: 100%;
+            background: #474747;
+        }
+        a {
+            color:#fff;
+        }
+        header {
+            position: relative;
+            height: .45rem;
+            line-height: .45rem;
+            color:#fff;
+            background: #474747;
+            font-size:.15rem;
+        }
+        header a {
+        }
+        .del-btn {
+            //display: none;
+        }
+        .del-btn,.sel-btn,.find-btn {
+            position: absolute;
+            top:.13rem;
+            width:.5rem;
+            height: .25rem;
+            line-height: .25rem;
+            border-radius: 5px;
+            box-shadow: 0 0 4px #000 inset;
+        }
+        .del-btn {
+            left:.1rem;
+        }
+        .find-btn {
+            right:.1rem;
+        }
+        .sel-btn {
+            right:.62rem;
+        }
+        section {
+            position: absolute;
+            left:0;
+            top:.45rem;
+            bottom:.45rem;
+            width:100%;
+            background: #565656;
+            overflow: hidden;
+        }
+        .photo li  {
+            position: absolute;
+            top:0;
+            left:0;
+            width: 1rem;
+            height: 1rem;
+            background-size:cover;
+            border:1px solid #ccc;
+            box-sizing:border-box;
+            -webkit-transition: top 1s,left 1s;
+            -moz-transition: top 1s,left 1s;
+            -ms-transition: top 1s,left 1s;
+            -o-transition: top 1s,left 1s;
+            transition: top 1s,left 1s;
+        }
+        footer {
+            position: absolute;
+            bottom:0;
+            height: .45rem;
+            line-height: .45rem;
+            background: #474747;
+        }
+        footer a {
+            float: left;
+            width: 1.5rem;
+            height: 100%;
+            color:#fff;
+            text-align: center;
+            font-size:.17rem;
+        }
+        footer a:first-child {
+            border-right: 1px solid #8b8b8b;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <header style="text-align:center;">
+            <a href="javascript:;" class="del-btn">删除</a>
+            <a href="javascript:;">相机相册</a>
+            <a href="javascript:;" class="sel-btn">选择</a>
+            <a href="javascript:;" class="find-btn">找回</a>
+        </header>
+        <section>
+            <ul class="photo"></ul>
+        </section>
+        <footer class="">
+            <a href="javascript:;">相机相册</a>
+            <a href="javascript:;">手机相册</a>
+        </footer>
+    </article>
+    <script type="text/javascript">
+        var html = "",
+            oUl = document.getElementsByClassName("photo")[0],
+            picArr = oUl.getElementsByTagName("li"),
+            oDelBtn = document.getElementsByClassName("del-btn")[0],
+            oSelBtn = document.getElementsByClassName("sel-btn")[0],
+            oFindBtn = document.getElementsByClassName("find-btn")[0],
+            arr = [],
+            arr2 =[],
+            index,
+            mark = true;
+        for(var i = 1; i <= 16;i++){
+            html +="<li style='background-image:url(images/"+i+".jpg)'></li>";
+        }
+        oUl.innerHTML = html;
+        getLocation();
+        oDelBtn.addEventListener("touchend",reMove,false);
+        oSelBtn.addEventListener("touchend",fn,false);
+        oFindBtn.addEventListener("touchend",findPic,false);
+        function fn() {
+            if(mark){
+                oSelBtn.innerHTML = "取消";
+                arr.length = 0;
+                oDelBtn.style.display = "block";
+                for(var i = 0; i < picArr.length;i++){
+                    picArr[i].index = i;
+                    picArr[i].addEventListener("touchend",picFn,false);
+                }
+                mark = false;
+            }else {
+                oSelBtn.innerHTML = "选择";
+                oDelBtn.style.display = "none";
+                for(i = 0; i < picArr.length;i++){
+                    picArr[i].index = i;
+                    picArr[i].style.opacity = "1";
+                    picArr[i].removeEventListener("touchend",picFn,false);
+                }
+                mark = true;
+            }
+        }
+        function picFn(){
+            arr.push(this.index);
+            this.style.opacity = ".4";
+            oSelBtn.style.display = "block";
+        }
+        function reMove() {
+            //console.log(arr);
+            arr = arr.sort(function (a,b) {
+                return a  - b;
+            });
+            /*for(var i = 0; i < arr.length; i++){
+                oUl.removeChild(picArr[arr[i]]);
+            }*/
+            for(var i = 0; i < arr.length;i++){
+                arr2.push(picArr[arr[i]]);
+                index = arr[i];
+            }
+            //console.log(arr2);
+            while(arr.length){
+                oUl.removeChild(picArr[arr.pop()]);
+            }
+            mark = false;
+            getLocation()
+            fn();
+        }
+        /*
+        * 0:0
+        * 1:0
+        * 2:0
+        * 3:1rem
+        * 6:0*/
+        function findPic(){
+            mark = false;
+            for(var i = 0; i < arr2.length; i++){
+                //oUl.appendChild(arr2[i]);
+                oUl.insertBefore(arr2[i],oUl.children[index-1])
+            }
+            getLocation();
+            fn();
+        }
+        function getLocation(){
+            for(var i = 0; i < picArr.length; i++){
+                picArr[i].style.left = i%3 + "rem";
+                picArr[i].style.top = Math.floor(i/3)+"rem";
+            }
+        }
+    </script>
+</body>
+</html>
