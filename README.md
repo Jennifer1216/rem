@@ -5,3 +5,4 @@
  document.getElementsByTagName("html")[0].style.fontSize = document.documentElement.clientWidth/3 + "px";
 ```
 这样一来，假设屏幕的宽度等于600px, 1rem = 600/3=200px
+[rem实现手机相册代码演示](https://github.com/Jennifer1216/rem/edit/master/album/photo.html)
